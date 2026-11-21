@@ -40,7 +40,7 @@ button {
   font-family: inherit;
 }
 ::selection {
-  background: var(--accent);
+  background: var(--lb-y);
   color: #fff;
 }
 img {
@@ -75,7 +75,7 @@ img {
 .cursor {
   width: 6px;
   height: 6px;
-  background: var(--accent);
+  background: var(--lb-y);
 }
 .cursor-ring {
   width: 38px;
@@ -223,7 +223,7 @@ img {
   bottom: 0;
   height: 1px;
   width: 100%;
-  background: var(--accent);
+  background: var(--lb-y);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.45s;
@@ -270,7 +270,7 @@ img {
   color: #f4f0e8;
 }
 .btn.fill::before {
-  background: var(--accent);
+  background: var(--lb-y);
 }
 .btn svg {
   width: 14px;
@@ -408,7 +408,7 @@ img {
   font-size: 11px;
   letter-spacing: 0.34em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--lb-y);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -419,7 +419,7 @@ img {
   content: "";
   width: 34px;
   height: 1px;
-  background: var(--accent);
+  background: var(--lb-y);
 }
 .panel h2 {
   font-family: var(--serif);
@@ -435,7 +435,7 @@ img {
 .sec-head h3 em,
 .contact h3 em {
   font-style: italic;
-  color: var(--accent);
+  color: var(--lb-y);
 }
 .panel p {
   color: var(--ink2);
@@ -492,7 +492,7 @@ img {
 .cue i {
   width: 1px;
   height: 46px;
-  background: linear-gradient(var(--accent), transparent);
+  background: linear-gradient(var(--lb-y), transparent);
   animation: cue 2.2s ease-in-out infinite;
   transform-origin: top;
 }
@@ -563,8 +563,8 @@ img {
   transform: none;
 }
 .rail .st.act .dot {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--lb-y);
+  border-color: var(--lb-y);
   box-shadow: 0 0 0 5px rgba(154, 116, 66, 0.2);
 }
 .meter {
@@ -589,7 +589,7 @@ img {
 }
 .meter .big sup {
   font-size: 20px;
-  color: var(--accent);
+  color: var(--lb-y);
   margin-left: 4px;
 }
 .meter .meta {
@@ -615,7 +615,7 @@ img {
   left: 0;
   top: 0;
   bottom: 0;
-  background: var(--accent);
+  background: var(--lb-y);
   width: 100%;
   transform-origin: left;
   transform: scaleX(0);
@@ -863,13 +863,13 @@ section {
   content: "";
   width: 14px;
   height: 14px;
-  background: var(--accent);
+  background: var(--lb-y);
   transform: rotate(45deg);
   display: inline-block;
 }
 .marquee em {
   font-style: italic;
-  color: var(--accent);
+  color: var(--lb-y);
 }
 .stats {
   display: grid;
@@ -891,7 +891,7 @@ section {
   line-height: 1;
 }
 .stats b sup {
-  color: var(--accent);
+  color: var(--lb-y);
   font-size: 0.4em;
   margin-left: 4px;
 }
@@ -1021,7 +1021,7 @@ section {
 .svc svg {
   width: 46px;
   height: 46px;
-  stroke: var(--accent);
+  stroke: var(--lb-y);
   fill: none;
   stroke-width: 1.1;
   margin: 36px 0 26px;
@@ -1199,8 +1199,8 @@ section {
   transition: color 0.5s;
 }
 .step.on .d {
-  background: var(--accent);
-  border-color: var(--accent);
+  background: var(--lb-y);
+  border-color: var(--lb-y);
 }
 .step.on .d b {
   color: #fff;
@@ -1242,7 +1242,7 @@ section {
   font-size: 10.5px;
   letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--lb-y);
   display: block;
   margin-bottom: 4px;
   font-weight: 600;
@@ -1288,7 +1288,7 @@ form {
 .f input:focus,
 .f select:focus,
 .f textarea:focus {
-  border-color: var(--accent);
+  border-color: var(--lb-y);
 }
 .f.err input {
   border-color: #c0583f;
@@ -1316,7 +1316,7 @@ form {
 }
 .form-ok {
   grid-column: 1/-1;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--lb-y);
   padding: 18px 20px;
   color: var(--ink2);
   font-size: 14px;
@@ -1579,5 +1579,21 @@ footer .row nav {
   .g-card .frame {
     height: auto;
     aspect-ratio: 16/10;
+  }
+}
+
+/* keep right-side text clear of the chapter rail */
+.panel.right {
+  right: 13vw;
+}
+.story .rail .st .lbl {
+  display: none;
+}
+.story .rail .st.act .lbl {
+  display: inline-block;
+}
+@media (max-width: 1400px) {
+  .story .rail .st.act .lbl {
+    display: none;
   }
 }

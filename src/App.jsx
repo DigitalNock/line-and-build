@@ -3,7 +3,9 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 import { SequenceStory } from './components/SequenceStory.jsx';
-import { Loader, Cursor, Header, Marquee, Stats, Sectors, Services, Gallery, Materials, Process, Contact, Footer } from './components/Sections.jsx';
+import { About } from './components/About.jsx';
+import { Loader, Cursor, Header, Marquee, Stats, Sectors, Services, Gallery, Materials, Contact, Footer } from './components/Sections.jsx';
+import { Process } from './components/Process.jsx';
 
 export default function App() {
   const [loadP, setLoadP] = useState(0);
@@ -61,6 +63,7 @@ export default function App() {
       <Loader progress={loadP} ready={ready} onDone={() => setEntered(true)} />
       <Header onNav={onNav} />
       <SequenceStory mobile={mobile} onProgress={setLoadP} onReady={() => setReady(true)} />
+      <About />
       <Marquee />
       <Stats />
       <Sectors />

@@ -4,7 +4,7 @@ import { Words } from "./Words.jsx";
 import { createGLRenderer, createCanvasRenderer } from "./sequenceRenderer.js";
 
 /* ===================== sequence config ===================== */
-export const FRAME_COUNT = 381; // Sequence 02000 … 02380 (same order)
+export const FRAME_COUNT = 380; // Sequence 02000 … 02380 (same order)
 // window.__SEQ_BASE lets a single-folder preview override the path (unused in the real project)
 export const frameUrl = (i, set = "desktop") =>
   (typeof window !== "undefined" && window.__SEQ_BASE
