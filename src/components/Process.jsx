@@ -69,21 +69,82 @@ export function Process() {
         const inner = card.querySelector(".lbp-inner");
         const photo = card.querySelector(".lbp-photo img");
         // card rises into place
-        gsap.from(inner, { y: 80, autoAlpha: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: card, start: "top 88%" } });
+        gsap.from(inner, {
+          y: 80,
+          autoAlpha: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: card, start: "top 88%" },
+        });
         // photo drifts slowly (parallax)
-        gsap.fromTo(photo, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.02, ease: "none", scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: true } });
+        gsap.fromTo(
+          photo,
+          { yPercent: -6, scale: 1.12 },
+          {
+            yPercent: 6,
+            scale: 1.02,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          },
+        );
         // checklist ticks in
-        gsap.from(card.querySelectorAll(".lbp-points li"), { x: -20, autoAlpha: 0, stagger: 0.08, duration: 0.6, ease: "power2.out", scrollTrigger: { trigger: card, start: "top 60%" } });
+        gsap.from(card.querySelectorAll(".lbp-points li"), {
+          x: -20,
+          autoAlpha: 0,
+          stagger: 0.08,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: { trigger: card, start: "top 60%" },
+        });
         // stamp lands
         const stamp = card.querySelector(".lbp-stamp");
-        if (stamp) gsap.fromTo(stamp, { scale: 2.6, rotate: -30, autoAlpha: 0 }, { scale: 1, rotate: -12, autoAlpha: 1, duration: 0.5, ease: "back.out(2.2)", scrollTrigger: { trigger: card, start: "top 45%" } });
+        if (stamp)
+          gsap.fromTo(
+            stamp,
+            { scale: 2.6, rotate: -30, autoAlpha: 0 },
+            {
+              scale: 1,
+              rotate: -12,
+              autoAlpha: 1,
+              duration: 0.5,
+              ease: "back.out(2.2)",
+              scrollTrigger: { trigger: card, start: "top 45%" },
+            },
+          );
         // when the NEXT card covers this one: sink back + dim
         const next = cards[i + 1];
         if (next) {
-          gsap.to(inner, { scale: 0.93, filter: "brightness(0.62)", ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top 20%", scrub: true } });
+          gsap.to(inner, {
+            scale: 0.95,
+            ease: "none",
+            scrollTrigger: {
+              trigger: next,
+              start: "top bottom",
+              end: "top 20%",
+              scrub: true,
+            },
+          });
         }
         // progress bar on each card fills up to its step
-        gsap.fromTo(card.querySelector(".lbp-progress i"), { scaleX: i / cards.length }, { scaleX: (i + 1) / cards.length, ease: "none", scrollTrigger: { trigger: card, start: "top 70%", end: "top 25%", scrub: true } });
+        gsap.fromTo(
+          card.querySelector(".lbp-progress i"),
+          { scaleX: i / cards.length },
+          {
+            scaleX: (i + 1) / cards.length,
+            ease: "none",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 70%",
+              end: "top 25%",
+              scrub: true,
+            },
+          },
+        );
       });
     }, ref);
     return () => ctx.revert();
@@ -97,7 +158,11 @@ export function Process() {
         <div className="sec-head">
           <div className="eyebrow">Process</div>
           <Heading a="How your project" b="takes shape." />
-          <p data-reveal>Six clear stages, one point of contact and complete transparency on cost and timelines, from the first site visit to the day you get the keys.</p>
+          <p data-reveal>
+            Six clear stages, one point of contact and complete transparency on
+            cost and timelines, from the first site visit to the day you get the
+            keys.
+          </p>
         </div>
       </div>
 
@@ -107,20 +172,41 @@ export function Process() {
             <div className="lbp-inner">
               <div className="lbp-photo">
                 <img src={s.img} alt={s.title} loading="lazy" />
-                <span className="lbp-photo-tag">Stage {String(i + 1).padStart(2, "0")}</span>
-                {s.stamp && <div className="lbp-stamp"><b>Approved</b><em>Line And Build</em></div>}
+                <span className="lbp-photo-tag">
+                  Stage {String(i + 1).padStart(2, "0")}
+                </span>
+                {s.stamp && (
+                  <div className="lbp-stamp">
+                    <b>Approved</b>
+                    <em>Line And Build</em>
+                  </div>
+                )}
               </div>
               <div className="lbp-content">
                 <div className="lbp-top">
-                  <span className="lbp-step">Step <b>{String(i + 1).padStart(2, "0")}</b> / {total}</span>
-                  <svg className="lbp-icon" viewBox="0 0 42 42"><path d={s.icon} /></svg>
+                  <span className="lbp-step">
+                    Step <b>{String(i + 1).padStart(2, "0")}</b> / {total}
+                  </span>
+                  <svg className="lbp-icon" viewBox="0 0 42 42">
+                    <path d={s.icon} />
+                  </svg>
                 </div>
-                <div className="lbp-progress"><i /></div>
+                <div className="lbp-progress">
+                  <i />
+                </div>
                 <div className="lbp-num">{String(i + 1).padStart(2, "0")}</div>
                 <h3>{s.title}</h3>
                 <p>{s.text}</p>
-                <ul className="lbp-points">{s.points.map((p) => <li key={p}>{p}</li>)}</ul>
-                {i === PROCESS_STEPS.length - 1 && <a href="#contact" className="btn fill lbp-cta" data-magnetic>Start your project</a>}
+                <ul className="lbp-points">
+                  {s.points.map((p) => (
+                    <li key={p}>{p}</li>
+                  ))}
+                </ul>
+                {i === PROCESS_STEPS.length - 1 && (
+                  <a href="#contact" className="btn fill lbp-cta" data-magnetic>
+                    Start your project
+                  </a>
+                )}
               </div>
             </div>
           </article>

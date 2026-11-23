@@ -1,0 +1,55 @@
+/* ===== Brands We Work With: charcoal band, white tiles, yellow accents (logo colours) ===== */
+.lbb{
+  --by:var(--lb-y,#EFCC18);
+  --bk:#222220;
+  position:relative;overflow:hidden;
+  background:var(--bk);
+  color:#fff;
+  padding:clamp(80px,9vw,120px) 6vw;
+}
+/* thin yellow scaffold lines in the corner, like the logo */
+.lbb::before{content:"";position:absolute;right:-60px;top:-60px;width:320px;height:320px;pointer-events:none;opacity:.14;
+  background:
+    linear-gradient(var(--by),var(--by)) 70px 0/3px 100% no-repeat,
+    linear-gradient(var(--by),var(--by)) 110px 0/3px 100% no-repeat,
+    linear-gradient(var(--by),var(--by)) 0 230px/100% 3px no-repeat,
+    linear-gradient(var(--by),var(--by)) 0 250px/100% 3px no-repeat}
+
+.lbb-wrap{position:relative;max-width:1180px;margin:0 auto}
+
+/* heading */
+.lbb-head{text-align:center;margin-bottom:clamp(44px,5vw,64px)}
+.lbb-pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.26em;text-transform:uppercase;
+  background:var(--by);color:var(--bk);padding:8px 18px;border-radius:40px}
+.lbb-title{font-family:"Manrope",sans-serif;font-weight:700;font-size:clamp(32px,4vw,52px);line-height:1.1;margin:20px 0 14px;color:#fff}
+.lbb-title span{color:var(--by)}
+.lbb-sub{margin:0 auto;max-width:540px;font-size:15.5px;line-height:1.7;color:rgba(255,255,255,.72)}
+
+/* grid */
+.lbb-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(14px,1.6vw,22px) clamp(12px,1.4vw,18px)}
+.lbb-item{display:flex;flex-direction:column;align-items:center;gap:12px}
+
+.lbb-tile{position:relative;width:100%;aspect-ratio:4/3;background:#fff;border-radius:6px;overflow:hidden;
+  display:grid;place-items:center;padding:14%;
+  box-shadow:0 14px 30px -18px rgba(0,0,0,.7);
+  transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s}
+.lbb-tile::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--by);
+  transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.lbb-tile img{max-width:100%;max-height:100%;object-fit:contain;filter:grayscale(1);opacity:.75;
+  transition:filter .45s,opacity .45s,transform .45s}
+.lbb-fallback{font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--bk);text-align:center;line-height:1.3}
+
+.lbb-item:hover .lbb-tile{transform:translateY(-6px);box-shadow:0 22px 40px -18px rgba(0,0,0,.85)}
+.lbb-item:hover .lbb-tile::after{transform:scaleX(1)}
+.lbb-item:hover .lbb-tile img{filter:none;opacity:1;transform:scale(1.05)}
+
+.lbb-name{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.85);text-align:center;transition:color .3s}
+.lbb-item:hover .lbb-name{color:var(--by)}
+
+/* touch screens: show logos in colour */
+@media (hover:none){
+  .lbb-tile img{filter:none;opacity:1}
+}
+@media (max-width:1080px){ .lbb-grid{grid-template-columns:repeat(5,1fr)} }
+@media (max-width:760px){  .lbb-grid{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:420px){  .lbb-grid{grid-template-columns:repeat(2,1fr)} .lbb-name{font-size:10px} }

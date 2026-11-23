@@ -4,7 +4,7 @@ import { Words } from "./Words.jsx";
 import { createGLRenderer, createCanvasRenderer } from "./sequenceRenderer.js";
 
 /* ===================== sequence config ===================== */
-export const FRAME_COUNT = 380; // Sequence 02000 … 02380 (same order)
+export const FRAME_COUNT = 664; // frames 0000.webp … 0663.webp in public/sequence/desktop (and mobile)
 // window.__SEQ_BASE lets a single-folder preview override the path (unused in the real project)
 export const frameUrl = (i, set = "desktop") =>
   (typeof window !== "undefined" && window.__SEQ_BASE
@@ -13,6 +13,10 @@ export const frameUrl = (i, set = "desktop") =>
   String(i).padStart(4, "0") +
   ".webp";
 const LAST = FRAME_COUNT - 1;
+// "contain" = always show the COMPLETE frame (soft blurred fill on the spare edges)
+// "cover"   = fill the whole screen edge to edge (crops the frame to fit the screen shape)
+const FIT_DESKTOP = "cover";
+const FIT_MOBILE = "cover"; // on portrait phones "contain" shows a smaller band; switch to "cover" to fill the screen
 const P0 = 0.03,
   P1 = 0.93; // hold on frame 0 before / last frame after
 const f2p = (f) => P0 + (f / LAST) * (P1 - P0);
@@ -20,16 +24,16 @@ const p2f = (p) => Math.min(LAST, Math.max(0, ((p - P0) / (P1 - P0)) * LAST));
 
 export const STAGES = [
   { n: "Groundwork", f: 0 },
-  { n: "Pillars", f: 42 },
-  { n: "Slab & Frame", f: 100 },
-  { n: "Structure", f: 158 },
-  { n: "Façade", f: 206 },
-  { n: "Interiors", f: 264 },
+  { n: "Pillars", f: 73 },
+  { n: "Slab & Frame", f: 175 },
+  { n: "Structure", f: 276 },
+  { n: "Façade", f: 360 },
+  { n: "Interiors", f: 462 },
 ];
 const PANELS = [
-  { hero: true, f: [0, 10] },
+  { hero: true, f: [0, 17] },
   {
-    f: [10, 42],
+    f: [17, 73],
     eyebrow: "01 — Groundwork",
     a: "Every landmark begins",
     b: "on open ground.",
@@ -37,7 +41,7 @@ const PANELS = [
     chips: ["Soil investigation", "Isolated footings", "Vastu-aligned layout"],
   },
   {
-    f: [42, 100],
+    f: [73, 175],
     eyebrow: "02 — Pillars",
     a: "Columns that will carry",
     b: "generations.",
@@ -45,7 +49,7 @@ const PANELS = [
     chips: ["Fe 550D TMT steel", "M30–M40 concrete", "Plumb-checked"],
   },
   {
-    f: [100, 158],
+    f: [175, 276],
     eyebrow: "03 — Slab & Frame",
     a: "Strength you can",
     b: "stand beneath.",
@@ -53,7 +57,7 @@ const PANELS = [
     chips: ["Monolithic slabs", "Engineered shuttering", "Controlled curing"],
   },
   {
-    f: [158, 206],
+    f: [276, 360],
     eyebrow: "04 — Structure",
     a: "Floor by floor,",
     b: "rising true.",
@@ -61,7 +65,7 @@ const PANELS = [
     chips: ["Seismic-zone design", "Daily site QA", "Weekly reports"],
   },
   {
-    f: [206, 264],
+    f: [360, 462],
     eyebrow: "05 — Façade",
     a: "Glass, light and",
     b: "bold cladding.",
@@ -69,7 +73,7 @@ const PANELS = [
     chips: ["Aluminium glazing", "ACP cladding", "Weather sealed"],
   },
   {
-    f: [264, 310],
+    f: [462, 542],
     right: true,
     eyebrow: "06 — Interiors",
     a: "Living spaces,",
@@ -78,7 +82,7 @@ const PANELS = [
     chips: ["Italian marble", "Cove lighting", "Bespoke joinery"],
   },
   {
-    f: [310, LAST],
+    f: [542, LAST],
     end: true,
     cta: true,
     right: true,
@@ -90,12 +94,9 @@ const PANELS = [
   },
 ];
 // moments where the camera crosses into a new space → subtle exposure flash
-const FLASHES = [100, 158, 264, 366];
+const FLASHES = [175, 276, 462, 640];
 // warm light-leak strength per frame (outdoor golden hour vs indoor)
-const leakAt = (f) => (f < 150 ? 0.55 : f < 264 ? 0.42 : f < 366 ? 0.14 : 0.5);
-// sunlit dust density per scene (outdoors heavy, indoors light motes)
-const dustAt = (f) =>
-  f < 100 ? 0.75 : f < 160 ? 0.5 : f < 264 ? 0.55 : f < 366 ? 0.22 : 0.45;
+const leakAt = (f) => (f < 262 ? 0.55 : f < 462 ? 0.42 : f < 640 ? 0.14 : 0.5);
 
 /* ===================== frame loader ===================== */
 function createLoader(set, onProgress) {
@@ -109,16 +110,18 @@ function createLoader(set, onProgress) {
       order.push(i);
     }
   };
-  for (let i = 0; i < 24; i++) push(i); // opening frames first
+  const FIRST = 10; // opening frames the hero needs right away
+  for (let i = 0; i < FIRST; i++) push(i);
   [24, 12, 6, 3, 1].forEach((step) => {
     for (let i = 0; i < FRAME_COUNT; i += step) push(i);
-  }); // coarse → fine
-  const keyCount = 24 + Math.ceil(FRAME_COUNT / 6); // enough to start
+  }); // coarse → fine (keeps loading in the background after the preloader lifts)
+  // lift the preloader once the opening frames + a coarse pass (every 24th) are in
+  const keyCount = FIRST + Math.ceil(FRAME_COUNT / 24);
   let done = 0,
     cursor = 0,
     active = 0,
     cancelled = false;
-  const MAX = 6;
+  const MAX = 10; // parallel image requests
   const next = () => {
     while (!cancelled && active < MAX && cursor < order.length) {
       const i = order[cursor++];
@@ -190,27 +193,32 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
 
   useLayoutEffect(() => {
     const canvas = canvasRef.current;
+    const FIT = mobile ? FIT_MOBILE : FIT_DESKTOP;
     let readyFired = false,
       lastSent = -1;
+    const fireReady = () => {
+      if (readyFired) return;
+      readyFired = true;
+      onReady && onReady();
+    };
+    // safety net: never hold the preloader longer than this on slow networks
+    const maxWait = setTimeout(fireReady, 2500);
     const loader = createLoader(mobile ? "mobile" : "desktop", (key, all) => {
       if (onProgress && !readyFired && key - lastSent >= 0.02) {
         lastSent = key;
         onProgress(key);
       }
-      if (!readyFired && key >= 1) {
-        readyFired = true;
-        onReady && onReady();
-      }
+      if (key >= 1) fireReady();
     });
 
-    /* ---- renderer: Three.js WebGL shader + dust, or 2D fallback ---- */
+    /* ---- renderer: Three.js WebGL shader, or 2D fallback ---- */
     let R;
     try {
-      R = createGLRenderer(canvas, { mobile });
+      R = createGLRenderer(canvas, { mobile, fit: FIT });
       wrap.current.classList.add("gl");
     } catch (e) {
       console.warn("WebGL unavailable, using 2D canvas", e);
-      R = createCanvasRenderer(canvas);
+      R = createCanvasRenderer(canvas, { fit: FIT });
     }
     const resize = () => R.resize();
     window.addEventListener("resize", resize);
@@ -264,12 +272,13 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
         time: t,
         mx: smx,
         my: smy,
-        scale:
-          1.045 * (1 + 0.012 * Math.sin(t * 0.35)) + Math.min(0.07, vel * 0.02), // breathing + speed push-in
-        ox: -smx * 22 + Math.sin(t * 0.6) * 1.6,
-        oy: -smy * 14 + Math.cos(t * 0.5) * 1.2, // parallax + handheld micro-shake
+        // contain: no zoom / drift, so nothing gets cut off
+        scale: FIT === "contain"
+          ? 1
+          : 1.045 * (1 + 0.012 * Math.sin(t * 0.35)) + Math.min(0.07, vel * 0.02), // breathing + speed push-in
+        ox: FIT === "contain" ? 0 : -smx * 22 + Math.sin(t * 0.6) * 1.6,
+        oy: FIT === "contain" ? 0 : -smy * 14 + Math.cos(t * 0.5) * 1.2, // parallax + handheld micro-shake
         leak: leakV,
-        dust: dustAt(cur),
       });
       // CSS light leak only used by the 2D fallback (the shader draws its own)
       if (R.kind === "2d" && leak.current) {
@@ -329,12 +338,12 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
       tl.fromTo(
         bars.current,
         { "--bar": "0vh" },
-        { "--bar": mobile ? "0vh" : "5.5vh", duration: 0.03, ease: "none" },
+        { "--bar": mobile || FIT === "contain" ? "0vh" : "5.5vh", duration: 0.03, ease: "none" },
         0,
       ).to(
         bars.current,
         { "--bar": "0vh", duration: 0.04, ease: "none" },
-        f2p(362),
+        f2p(633),
       );
       PANELS.forEach((pn, i) => {
         const el = panels[i];
@@ -396,18 +405,20 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
           }),
       );
       // gentle push on the final held frame
-      tl.fromTo(
-        canvas,
-        { scale: 1 },
-        { scale: 1.06, duration: 1 - P1, ease: "none" },
-        P1,
-      );
+      if (FIT !== "contain")
+        tl.fromTo(
+          canvas,
+          { scale: 1 },
+          { scale: 1.06, duration: 1 - P1, ease: "none" },
+          P1,
+        );
     }, wrap);
 
     hud(0, 0);
     return () => {
       cancelAnimationFrame(raf);
       loader.cancel();
+      clearTimeout(maxWait);
       R.dispose();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
