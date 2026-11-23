@@ -4,7 +4,7 @@ import { Words } from "./Words.jsx";
 import { createGLRenderer, createCanvasRenderer } from "./sequenceRenderer.js";
 
 /* ===================== sequence config ===================== */
-export const FRAME_COUNT = 664; // frames 0000.webp … 0663.webp in public/sequence/desktop (and mobile)
+export const FRAME_COUNT = 380; // frames 0000.webp … 0379.webp in public/sequence/desktop (and mobile)
 // window.__SEQ_BASE lets a single-folder preview override the path (unused in the real project)
 export const frameUrl = (i, set = "desktop") =>
   (typeof window !== "undefined" && window.__SEQ_BASE
@@ -24,16 +24,16 @@ const p2f = (p) => Math.min(LAST, Math.max(0, ((p - P0) / (P1 - P0)) * LAST));
 
 export const STAGES = [
   { n: "Groundwork", f: 0 },
-  { n: "Pillars", f: 73 },
-  { n: "Slab & Frame", f: 175 },
-  { n: "Structure", f: 276 },
-  { n: "Façade", f: 360 },
-  { n: "Interiors", f: 462 },
+  { n: "Pillars", f: 40 },
+  { n: "Slab & Frame", f: 96 },
+  { n: "Structure", f: 159 },
+  { n: "Façade", f: 208 },
+  { n: "Interiors", f: 266 },
 ];
 const PANELS = [
-  { hero: true, f: [0, 17] },
+  { hero: true, f: [0, 10] },
   {
-    f: [17, 73],
+    f: [10, 40],
     eyebrow: "01 — Groundwork",
     a: "Every landmark begins",
     b: "on open ground.",
@@ -41,7 +41,7 @@ const PANELS = [
     chips: ["Soil investigation", "Isolated footings", "Vastu-aligned layout"],
   },
   {
-    f: [73, 175],
+    f: [40, 96],
     eyebrow: "02 — Pillars",
     a: "Columns that will carry",
     b: "generations.",
@@ -49,7 +49,7 @@ const PANELS = [
     chips: ["Fe 550D TMT steel", "M30–M40 concrete", "Plumb-checked"],
   },
   {
-    f: [175, 276],
+    f: [96, 159],
     eyebrow: "03 — Slab & Frame",
     a: "Strength you can",
     b: "stand beneath.",
@@ -57,7 +57,7 @@ const PANELS = [
     chips: ["Monolithic slabs", "Engineered shuttering", "Controlled curing"],
   },
   {
-    f: [276, 360],
+    f: [159, 208],
     eyebrow: "04 — Structure",
     a: "Floor by floor,",
     b: "rising true.",
@@ -65,7 +65,7 @@ const PANELS = [
     chips: ["Seismic-zone design", "Daily site QA", "Weekly reports"],
   },
   {
-    f: [360, 462],
+    f: [208, 266],
     eyebrow: "05 — Façade",
     a: "Glass, light and",
     b: "bold cladding.",
@@ -73,7 +73,7 @@ const PANELS = [
     chips: ["Aluminium glazing", "ACP cladding", "Weather sealed"],
   },
   {
-    f: [462, 542],
+    f: [266, 304],
     right: true,
     eyebrow: "06 — Interiors",
     a: "Living spaces,",
@@ -82,7 +82,7 @@ const PANELS = [
     chips: ["Italian marble", "Cove lighting", "Bespoke joinery"],
   },
   {
-    f: [542, LAST],
+    f: [304, LAST],
     end: true,
     cta: true,
     right: true,
@@ -94,9 +94,9 @@ const PANELS = [
   },
 ];
 // moments where the camera crosses into a new space → subtle exposure flash
-const FLASHES = [175, 276, 462, 640];
+const FLASHES = [159, 266, 369];
 // warm light-leak strength per frame (outdoor golden hour vs indoor)
-const leakAt = (f) => (f < 262 ? 0.55 : f < 462 ? 0.42 : f < 640 ? 0.14 : 0.5);
+const leakAt = (f) => (f < 208 ? 0.55 : f < 266 ? 0.42 : f < 368 ? 0.14 : 0.5);
 
 /* ===================== frame loader ===================== */
 function createLoader(set, onProgress) {
@@ -343,7 +343,7 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
       ).to(
         bars.current,
         { "--bar": "0vh", duration: 0.04, ease: "none" },
-        f2p(633),
+        f2p(364),
       );
       PANELS.forEach((pn, i) => {
         const el = panels[i];

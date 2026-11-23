@@ -479,6 +479,8 @@ export function Sectors() {
   const setSplit = (v) => {
     split.current.v = Math.min(92, Math.max(8, v));
     frame.current.style.setProperty("--s", split.current.v);
+    // the mobile caption below the frame reads the same value
+    if (ref.current) ref.current.style.setProperty("--s", split.current.v);
   };
   const goTo = (v) =>
     gsap.to(split.current, {
@@ -565,16 +567,18 @@ export function Sectors() {
     el.addEventListener("pointerdown", down);
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
+    window.addEventListener("pointercancel", up); // phones: a vertical swipe cancels the drag
     return () => {
       ctx.revert();
       el.removeEventListener("pointerdown", down);
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
+      window.removeEventListener("pointercancel", up);
     };
   }, []);
 
   return (
-    <section id="sectors" className="lbs" ref={ref}>
+    <section id="sectors" className="lbs" ref={ref} style={{ "--s": 50 }}>
       <div className="lbs-wrap">
         <div className="lbs-head">
           <div>
@@ -627,6 +631,22 @@ export function Sectors() {
           <span className="lbs-hint">Drag to compare</span>
         </div>
 
+        {/* mobile only: the side you're looking at is described below the image */}
+        <div className="lbs-cap" aria-live="polite">
+          {SECTORS.map((s) => (
+            <div className={`lbs-cap-item ${s.side}`} key={s.side}>
+              <small>{s.tag}</small>
+              <h4>{s.title}</h4>
+              <p>{s.text}</p>
+              <ul>
+                {s.list.map((l) => (
+                  <li key={l}>{l}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
         <div className="lbs-switch">
           <button onClick={() => goTo(82)}>
             <b>01</b> Residential
@@ -642,6 +662,8 @@ export function Sectors() {
     </section>
   );
 }
+/* ---------- services: three expanding panels ---------- */
+
 /* ---------- services: three expanding panels ---------- */
 export function Services() {
   const ref = useRef(null);
