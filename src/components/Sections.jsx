@@ -4,6 +4,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Heading } from "./Words.jsx";
 import { frameUrl } from "./SequenceStory.jsx";
 import "./sections-brand.css";
+import "./gallery.css";
+import "./contact.css";
+import { openConsult } from "./ConsultModal.jsx";
 
 /* =====================================================================
    LINE AND BUILD — company details (edit here, used across the site)
@@ -252,6 +255,7 @@ export function Header({ onNav }) {
       </a>
       <nav className={"nav" + (open ? " open" : "")}>
         {[
+          ["#top", "Home"],
           ["#about", "About"],
           ["#services", "Services"],
           ["#sectors", "Residential & Commercial"],
@@ -263,7 +267,15 @@ export function Header({ onNav }) {
           </a>
         ))}
       </nav>
-      <a href="#contact" className="btn hdr-cta" onClick={go} data-magnetic>
+      <a
+        href="#contact"
+        className="btn hdr-cta"
+        onClick={(e) => {
+          e.preventDefault();
+          openConsult();
+        }}
+        data-magnetic
+      >
         Book a consultation
       </a>
       <button
@@ -422,10 +434,6 @@ export function Stats() {
               A small studio, <em>hands-on</em> from start to finish.
             </h2>
           </div>
-          <p className="lbf-intro">
-            No hand-offs between firms. The people who draw your project are the
-            people who build it.
-          </p>
         </header>
 
         <div className="lbf-row">
@@ -704,10 +712,6 @@ export function Services() {
       <div className="sec-head">
         <div className="eyebrow">Services</div>
         <Heading a="Architecture, construction" b="& interiors." />
-        <p data-reveal>
-          Three services, one accountable team. Hire us for one, or let us take
-          your project from the first line on paper to the last finishing touch.
-        </p>
       </div>
       <div className="lb-svcs">
         {SERVICES.map((s, i) => (
@@ -753,7 +757,6 @@ export function Services() {
     </section>
   );
 }
-
 /* ---------- horizontal gallery ---------- */
 export function Gallery() {
   const ref = useRef(null),
@@ -775,7 +778,7 @@ export function Gallery() {
           anticipatePin: 1,
         },
       });
-      gsap.utils.toArray(".g-card .frame div").forEach((img) =>
+      gsap.utils.toArray(".lbg-frame .lbg-img").forEach((img) =>
         gsap.fromTo(
           img,
           { xPercent: -4 },
@@ -796,22 +799,25 @@ export function Gallery() {
     return () => ctx.revert();
   }, []);
   return (
-    <section id="gallery" className="gallery lb-gallery" ref={ref}>
-      <div className="sec-head">
-        <div className="eyebrow">Projects</div>
+    <section id="gallery" className="lbg" ref={ref}>
+      <div className="lbg-head">
+        <div className="lbg-eyebrow">Projects</div>
         <Heading a="The project," b="frame by frame." />
         <p data-reveal>
           Moments from the build you just walked through, from the first pillars
           to the finished living spaces.
         </p>
       </div>
-      <div className="g-track" ref={track}>
+      <div className="lbg-track" ref={track}>
         {STILLS.map((s) => (
-          <div className="g-card" key={s.title}>
-            <div className="frame">
-              <div style={{ backgroundImage: `url("${galleryUrl(s.img)}")` }} />
+          <div className="lbg-card" key={s.title}>
+            <div className="lbg-frame">
+              <div
+                className="lbg-img"
+                style={{ backgroundImage: `url("${galleryUrl(s.img)}")` }}
+              />
             </div>
-            <div className="cap">
+            <div className="lbg-cap">
               <h6>{s.title}</h6>
               <span>{s.tag}</span>
             </div>
@@ -1137,10 +1143,12 @@ export function Process() {
     </section>
   );
 }
-
 /* ---------- contact ---------- */
+const MAP_QUERY = encodeURIComponent(COMPANY.address);
+const MAP_EMBED = `https://maps.google.com/maps?q=${MAP_QUERY}&z=16&output=embed`;
+const MAP_DIRECTIONS = `https://www.google.com/maps/dir/?api=1&destination=${MAP_QUERY}`;
+
 export function Contact() {
-  const [type, setType] = useState("Architecture");
   const [errs, setErrs] = useState({});
   const [ok, setOk] = useState("");
   const submit = (e) => {
@@ -1156,125 +1164,94 @@ export function Contact() {
     }
     // TODO: send to your backend / CRM here, e.g. fetch('/api/enquiry', { method: 'POST', body: new FormData(f) })
     setOk(
-      `Thank you, ${name}. Your ${type.toLowerCase()} enquiry is ready. Connect this form to your backend to receive it.`,
+      `Thank you, ${name}. Your enquiry is ready. Connect this form to your backend to receive it.`,
     );
   };
   return (
-    <section id="contact" className="contact pad lb-contact">
-      <div>
-        <div className="eyebrow">Start a project</div>
+    <section id="contact" className="lbc">
+      <div className="lbc-head">
+        <div className="lbc-eyebrow">Start a project</div>
         <Heading a="Let's build" b="something lasting." />
-        <p data-reveal className="lb-contact-lead">
-          Tell us about your plot or space. Our architects will review it and
-          set up a consultation.
-        </p>
-        <div className="info" data-reveal>
-          <div>
-            <small>Studio</small>
-            {COMPANY.address}
-          </div>
-          <div>
-            <small>Call</small>
-            <a href={tel(COMPANY.phone)}>{COMPANY.phone}</a>
-          </div>
-          <div>
-            <small>Write</small>
-            <a href={"mailto:" + COMPANY.email}>{COMPANY.email}</a>
-          </div>
-          <div className="lb-arch">
-            {COMPANY.architects.map((a) => (
-              <span key={a.name}>
-                <small>Principal Architect</small>
-                <b>{a.name}</b>
-                <a href={tel(a.phone)}>{a.phone}</a>
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
-      <form onSubmit={submit} noValidate data-reveal>
-        <div className="f full">
-          <label>I'm interested in</label>
-          <div className="seg">
-            {[
-              "Architecture",
-              "Construction",
-              "Interiors",
-              "Complete project",
-            ].map((t) => (
-              <button
-                type="button"
-                key={t}
-                className={t === type ? "on" : ""}
-                onClick={() => setType(t)}
-              >
-                {t}
-              </button>
-            ))}
+
+      <div className="lbc-grid">
+        {/* LEFT: map */}
+        <div className="lbc-map" data-reveal>
+          <iframe
+            title={`${COMPANY.name} studio location`}
+            src={MAP_EMBED}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+          <div className="lbc-map-card">
+            <small>Studio</small>
+            <p>{COMPANY.address}</p>
+            <div className="lbc-map-links">
+              <a href={tel(COMPANY.phone)}>{COMPANY.phone}</a>
+              <a href={MAP_DIRECTIONS} target="_blank" rel="noreferrer">
+                Get directions →
+              </a>
+            </div>
           </div>
         </div>
-        <div className={"f" + (errs.nm ? " err" : "")}>
-          <label htmlFor="nm">Full name *</label>
-          <input id="nm" name="nm" autoComplete="name" />
-        </div>
-        <div className={"f" + (errs.ph ? " err" : "")}>
-          <label htmlFor="ph">Phone *</label>
-          <input id="ph" name="ph" inputMode="tel" autoComplete="tel" />
-        </div>
-        <div className="f">
-          <label htmlFor="em">Email</label>
-          <input id="em" name="em" type="email" autoComplete="email" />
-        </div>
-        <div className="f">
-          <label htmlFor="loc">Site location</label>
-          <input id="loc" name="loc" />
-        </div>
-        <div className="f">
-          <label htmlFor="sp">Space type</label>
-          <select id="sp" name="sp">
-            <option>Residential</option>
-            <option>Commercial</option>
-            <option>Corporate</option>
-          </select>
-        </div>
-        <div className="f">
-          <label htmlFor="sz">Built-up area</label>
-          <select id="sz" name="sz">
-            <option>Under 2,000 sq ft</option>
-            <option>2,000 – 5,000 sq ft</option>
-            <option>5,000 – 15,000 sq ft</option>
-            <option>15,000+ sq ft</option>
-          </select>
-        </div>
-        <div className="f full">
-          <label htmlFor="msg">Tell us about the project</label>
-          <textarea id="msg" name="msg" />
-        </div>
-        {ok && <div className="form-ok">{ok}</div>}
-        <div
-          style={{
-            gridColumn: "1/-1",
-            display: "flex",
-            alignItems: "center",
-            gap: 20,
-            flexWrap: "wrap",
-          }}
-        >
-          <button className="btn fill" type="submit" data-magnetic>
-            Request consultation{" "}
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor">
-              <path d="M1 7h12M8 2l5 5-5 5" />
-            </svg>
-          </button>
-          <span className="form-note">
-            Form is not yet connected to a backend.
-          </span>
-        </div>
-      </form>
+
+        {/* RIGHT: form (starts from Full name) */}
+        <form className="lbc-form" onSubmit={submit} noValidate data-reveal>
+          <div className={"lbc-f" + (errs.nm ? " err" : "")}>
+            <label htmlFor="nm">Full name *</label>
+            <input id="nm" name="nm" autoComplete="name" />
+          </div>
+          <div className={"lbc-f" + (errs.ph ? " err" : "")}>
+            <label htmlFor="ph">Phone *</label>
+            <input id="ph" name="ph" inputMode="tel" autoComplete="tel" />
+          </div>
+          <div className="lbc-f">
+            <label htmlFor="em">Email</label>
+            <input id="em" name="em" type="email" autoComplete="email" />
+          </div>
+          <div className="lbc-f">
+            <label htmlFor="loc">Site location</label>
+            <input id="loc" name="loc" />
+          </div>
+          <div className="lbc-f">
+            <label htmlFor="sp">Space type</label>
+            <select id="sp" name="sp">
+              <option>Residential</option>
+              <option>Commercial</option>
+              <option>Corporate</option>
+            </select>
+          </div>
+          <div className="lbc-f">
+            <label htmlFor="sz">Built-up area</label>
+            <select id="sz" name="sz">
+              <option>Under 2,000 sq ft</option>
+              <option>2,000 – 5,000 sq ft</option>
+              <option>5,000 – 15,000 sq ft</option>
+              <option>15,000+ sq ft</option>
+            </select>
+          </div>
+          <div className="lbc-f full">
+            <label htmlFor="msg">Tell us about the project</label>
+            <textarea id="msg" name="msg" />
+          </div>
+          {ok && <div className="lbc-ok">{ok}</div>}
+          <div className="lbc-actions">
+            <button className="lbc-btn" type="submit" data-magnetic>
+              Request consultation{" "}
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor">
+                <path d="M1 7h12M8 2l5 5-5 5" />
+              </svg>
+            </button>
+            <span className="lbc-note">
+              Form is not yet connected to a backend.
+            </span>
+          </div>
+        </form>
+      </div>
     </section>
   );
 }
-
 /* ---------- footer ---------- */
 export function Footer({ onNav }) {
   const go = (e) => {
@@ -1329,6 +1306,7 @@ export function Footer({ onNav }) {
         </span>
         <nav>
           {[
+            ["#top", "Home"],
             ["#about", "About"],
             ["#services", "Services"],
             ["#gallery", "Projects"],

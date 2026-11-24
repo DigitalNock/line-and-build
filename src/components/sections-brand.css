@@ -499,7 +499,7 @@ section.pad {
   overflow: hidden;
   background: #1d1d1c;
   color: var(--lb-paper);
-  padding: clamp(80px, 11vw, 150px) 6vw;
+  padding: clamp(20px, 8vw, 40px) 3vw;
 }
 .lbf-grid {
   position: absolute;
@@ -531,10 +531,10 @@ section.pad {
 
 .lbf-head {
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1.4fr 0fr;
   gap: 6vw;
   align-items: end;
-  margin-bottom: clamp(50px, 7vw, 90px);
+  margin-bottom: clamp(50px, 1vw, 90px);
 }
 .lbf-eyebrow {
   display: inline-flex;
@@ -658,7 +658,7 @@ section.pad {
 
 @media (max-width: 980px) {
   .lbf-head {
-    grid-template-columns: 1fr;
+    grid-template-columns: 0fr;
     gap: 22px;
   }
   .lbf-intro {
@@ -711,7 +711,7 @@ section.pad {
 }
 .lbs-head p {
   color: var(--lb-g);
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.7;
   max-width: 400px;
   justify-self: end;
@@ -978,7 +978,7 @@ section.pad {
 .lbm {
   background: #232321;
   color: var(--lb-paper);
-  padding: clamp(80px, 10vw, 140px) 6vw;
+  padding: clamp(80px, 3vw, 140px) 4vw;
   position: relative;
   overflow: hidden;
 }

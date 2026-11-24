@@ -817,8 +817,8 @@ section {
 }
 .sec-head {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 6vw;
+  grid-template-columns: 1.1fr 0fr;
+  gap: 3vw;
   align-items: end;
   margin-bottom: 72px;
 }
@@ -1615,7 +1615,7 @@ footer .row nav {
   }
   .lbs-head p {
     justify-self: start;
-    font-size: 14.5px;
+    font-size: 13px;
     max-width: none;
   }
 

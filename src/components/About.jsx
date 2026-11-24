@@ -1,11 +1,12 @@
 import React, { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "./about.css";
 
 /* =====================================================================
    ABOUT — "Drawing Sheet"
-   The section is an architect's drawing sheet. As you scroll, a house
-   elevation draws itself in three stages that follow the brand line
+   The section is an architect's drawing sheet. A sketch-to-photo
+   transition plays automatically in three stages that follow the brand line
    "From Foundation to Finishing Touches", while the story changes beside it.
    Contact details live in the sheet's title block, which gets stamped.
    ===================================================================== */
@@ -97,8 +98,10 @@ export function About() {
 
   useLayoutEffect(() => {
     const q = gsap.utils.selector(root);
-    const mm = gsap.matchMedia();
-    const prep = () => {
+    const STAGE_SECONDS = 6; // ⏱ how long each stage (sketch → scan → photo) lasts
+
+    const ctx = gsap.context(() => {
+      // starting state
       gsap.set(q(".lab-shot"), { autoAlpha: 0 });
       gsap.set(q(".lab-shot .sketch"), {
         clipPath: "inset(0% 0% 100% 0%)",
@@ -111,11 +114,30 @@ export function About() {
       gsap.set(q(".lab-shot .scan"), { left: "0%", autoAlpha: 0 });
       gsap.set(q(".lab-callout"), { autoAlpha: 0, y: 12 });
       gsap.set(q(".lab-stamp"), { autoAlpha: 0, scale: 2.4, rotate: -28 });
-    };
-    const build = (tl) => {
+
+      const setStep = (i) => {
+        q(".lab-step").forEach((el, k) => el.classList.toggle("on", k === i));
+        q(".lab-tab").forEach((el, k) => {
+          el.classList.toggle("on", k === i);
+          el.classList.toggle("done", k < i);
+        });
+      };
+      setStep(0);
+
+      // one looping timeline: same sketch → yellow scan → photo transition, played automatically
       const shots = q(".lab-shot"),
         calls = q(".lab-callout"),
         mode = q(".lab-mode")[0];
+      const tl = gsap.timeline({
+        paused: true,
+        repeat: -1,
+        onUpdate() {
+          const p = tl.progress();
+          setStep(p < 0.34 ? 0 : p < 0.67 ? 1 : 2);
+          gsap.set(q(".lab-bar i"), { scaleX: p });
+        },
+      });
+      tl.to({}, { duration: 1 }, 0);
       shots.forEach((fig, i) => {
         const t = i / 3,
           sk = fig.querySelector(".sketch"),
@@ -155,64 +177,37 @@ export function About() {
           .to(sc, { autoAlpha: 0, duration: 0.01 }, t + 0.27)
           .to(ph, { scale: 1, duration: 0.33, ease: "none" }, t); // slow push-in
       });
+      // fade the last photo out so the loop restarts cleanly
       tl.to(
-        q(".lab-stamp"),
-        {
-          autoAlpha: 1,
-          scale: 1,
-          rotate: -12,
-          duration: 0.05,
-          ease: "back.out(2)",
-        },
-        0.94,
+        [shots[shots.length - 1], calls[calls.length - 1]],
+        { autoAlpha: 0, duration: 0.025 },
+        0.975,
       );
-    };
-    const setStep = (i) => {
-      q(".lab-step").forEach((el, k) => el.classList.toggle("on", k === i));
-      q(".lab-tab").forEach((el, k) => {
-        el.classList.toggle("on", k === i);
-        el.classList.toggle("done", k < i);
-      });
-    };
+      tl.duration(STAGE_SECONDS * 3);
 
-    const ctx = gsap.context(() => {
-      // desktop: pinned sheet, drawing scrubs with scroll
-      mm.add("(min-width: 981px)", () => {
-        prep();
-        setStep(0);
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: q(".lab-pin")[0],
-            start: "top top",
-            end: () => "+=" + window.innerHeight * 2.4,
-            pin: true,
-            scrub: 0.9,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-          onUpdate() {
-            const p = tl.progress();
-            setStep(p < 0.33 ? 0 : p < 0.66 ? 1 : 2);
-            gsap.set(q(".lab-bar i"), { scaleX: p });
-          },
-        });
-        tl.to({}, { duration: 1 }, 0);
-        build(tl);
+      // play only while the section is on screen (saves battery / CPU)
+      ScrollTrigger.create({
+        trigger: root.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => (self.isActive ? tl.play() : tl.pause()),
       });
-      // mobile: no pin; draws as the sheet scrolls past, all steps visible
-      mm.add("(max-width: 980px)", () => {
-        prep();
-        q(".lab-step").forEach((el) => el.classList.add("on"));
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: q(".lab-draw")[0],
-            start: "top 75%",
-            end: "+=" + window.innerHeight * 1.6,
-            scrub: 0.8,
-          },
-        });
-        tl.to({}, { duration: 1 }, 0);
-        build(tl);
+      // pause while the visitor hovers the picture
+      const draw = q(".lab-draw")[0];
+      const pause = () => tl.pause(),
+        play = () => tl.play();
+      draw.addEventListener("mouseenter", pause);
+      draw.addEventListener("mouseleave", play);
+
+      // stamp lands once
+      gsap.to(q(".lab-stamp"), {
+        autoAlpha: 1,
+        scale: 1,
+        rotate: -12,
+        duration: 0.6,
+        ease: "back.out(2)",
+        delay: 0.8,
+        scrollTrigger: { trigger: root.current, start: "top 60%", once: true },
       });
       // heading reveal
       gsap.from(q(".lab-h .w"), {
@@ -222,11 +217,13 @@ export function About() {
         stagger: 0.05,
         scrollTrigger: { trigger: root.current, start: "top 75%" },
       });
+
+      return () => {
+        draw.removeEventListener("mouseenter", pause);
+        draw.removeEventListener("mouseleave", play);
+      };
     }, root);
-    return () => {
-      ctx.revert();
-      mm.revert();
-    };
+    return () => ctx.revert();
   }, []);
 
   const words = (s) =>
@@ -252,10 +249,6 @@ export function About() {
               <i />
               About {COMPANY.name}
             </div>
-            <h2 className="lab-h">
-              {words("From foundation")}{" "}
-              <em>{words("to finishing touches.")}</em>
-            </h2>
           </header>
 
           <div className="lab-grid">
@@ -267,6 +260,10 @@ export function About() {
             </div>
 
             <div className="lab-side">
+              <h2 className="lab-h">
+                {words("From foundation")}{" "}
+                <em>{words("to finishing touches.")}</em>
+              </h2>
               <div className="lab-tabs">
                 {STEPS.map((s) => (
                   <div className="lab-tab" key={s.k}>

@@ -158,11 +158,6 @@ export function Process() {
         <div className="sec-head">
           <div className="eyebrow">Process</div>
           <Heading a="How your project" b="takes shape." />
-          <p data-reveal>
-            Six clear stages, one point of contact and complete transparency on
-            cost and timelines, from the first site visit to the day you get the
-            keys.
-          </p>
         </div>
       </div>
 

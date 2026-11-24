@@ -169,12 +169,6 @@ function createLoader(set, onProgress) {
   };
 }
 
-const fmtTC = (f) => {
-  const s = Math.floor(f / 24),
-    fr = Math.floor(f % 24);
-  return `00:${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}:${String(fr).padStart(2, "0")}`;
-};
-
 /* ===================== component ===================== */
 export function SequenceStory({ onProgress, onReady, mobile }) {
   const wrap = useRef(null),
@@ -185,8 +179,6 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
   const pct = useRef(null),
     stNum = useRef(null),
     stName = useRef(null),
-    fnum = useRef(null),
-    tc = useRef(null),
     trk = useRef(null),
     rail = useRef(null),
     cue = useRef(null);
@@ -273,9 +265,11 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
         mx: smx,
         my: smy,
         // contain: no zoom / drift, so nothing gets cut off
-        scale: FIT === "contain"
-          ? 1
-          : 1.045 * (1 + 0.012 * Math.sin(t * 0.35)) + Math.min(0.07, vel * 0.02), // breathing + speed push-in
+        scale:
+          FIT === "contain"
+            ? 1
+            : 1.045 * (1 + 0.012 * Math.sin(t * 0.35)) +
+              Math.min(0.07, vel * 0.02), // breathing + speed push-in
         ox: FIT === "contain" ? 0 : -smx * 22 + Math.sin(t * 0.6) * 1.6,
         oy: FIT === "contain" ? 0 : -smy * 14 + Math.cos(t * 0.5) * 1.2, // parallax + handheld micro-shake
         leak: leakV,
@@ -306,8 +300,6 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
         stName.current.textContent = STAGES[si].n;
       }
       pct.current.innerHTML = Math.round(p * 100) + "<sup>%</sup>";
-      fnum.current.textContent = String(Math.round(f)).padStart(4, "0");
-      tc.current.textContent = fmtTC(f);
       trk.current.style.transform = `scaleX(${p})`;
       cue.current.style.opacity = p < 0.01 ? 1 : 0;
     };
@@ -338,7 +330,11 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
       tl.fromTo(
         bars.current,
         { "--bar": "0vh" },
-        { "--bar": mobile || FIT === "contain" ? "0vh" : "5.5vh", duration: 0.03, ease: "none" },
+        {
+          "--bar": mobile || FIT === "contain" ? "0vh" : "5.5vh",
+          duration: 0.03,
+          ease: "none",
+        },
         0,
       ).to(
         bars.current,
@@ -516,10 +512,6 @@ export function SequenceStory({ onProgress, onReady, mobile }) {
         <div className="meta">
           <div>
             Chapter <b ref={stNum}>01</b> / 06 — <b ref={stName}>Groundwork</b>
-          </div>
-          <div>
-            <span className="rec" /> Frame <b ref={fnum}>0000</b> /{" "}
-            {String(LAST).padStart(4, "0")} · <span ref={tc}>00:00:00:00</span>
           </div>
           <div className="track">
             <i ref={trk} />

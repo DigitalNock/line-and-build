@@ -16,11 +16,14 @@ import {
   Materials,
   Contact,
   Footer,
+  COMPANY,
 } from "./components/Sections.jsx";
 import { Process } from "./components/Process.jsx";
 import { VideoGallery } from "./components/VideoGallery.jsx";
 import { BrandPartners } from "./components/BrandPartners.jsx";
 import { Testimonials } from "./components/Testimonials.jsx";
+import { ConsultModal } from "./components/ConsultModal.jsx";
+import { BackToTop } from "./components/BackToTop.jsx";
 
 export default function App() {
   const [loadP, setLoadP] = useState(0);
@@ -158,6 +161,8 @@ export default function App() {
       <Testimonials />
       <Contact />
       <Footer onNav={onNav} />
+      <BackToTop onNav={onNav} />
+      <ConsultModal lenisRef={lenisRef} company={COMPANY} />
     </>
   );
 }

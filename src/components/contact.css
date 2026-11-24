@@ -1,0 +1,238 @@
+/* ===== CONTACT — map + form (Line And Build grey + minimal yellow) ===== */
+.lbc {
+  --lbc-y: #efcc18;
+  --lbc-g: #585856;
+  --lbc-g2: #3f3f3d;
+  --lbc-g3: #8c8c88;
+  --lbc-g4: #d6d5d0;
+  position: relative;
+  background: #e9e8e3;
+  color: var(--lbc-g2);
+  padding: 110px 6vw;
+}
+
+/* heading */
+.lbc-head {
+  margin-bottom: 44px;
+}
+.lbc-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--lbc-g);
+}
+.lbc-eyebrow::before {
+  content: "";
+  width: 34px;
+  height: 3px;
+  background: var(--lbc-y);
+}
+.lbc-head h3 {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(40px, 4.6vw, 72px);
+  line-height: 1;
+  color: var(--lbc-g2);
+}
+.lbc-head h3 em {
+  font-style: italic;
+  color: var(--lbc-g);
+}
+.lbc-head h3 em .w {
+  background: linear-gradient(transparent 74%, rgba(239, 204, 24, 0.5) 74%);
+}
+
+.lbc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: 5vw;
+  align-items: stretch;
+}
+
+/* map */
+.lbc-map {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid var(--lbc-g4);
+  background: #dcdbd6;
+}
+.lbc-map iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.6s;
+}
+.lbc-map:hover iframe {
+  filter: grayscale(0);
+}
+.lbc-map-card {
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 18px;
+  z-index: 2;
+  background: rgba(251, 251, 249, 0.96);
+  border-left: 4px solid var(--lbc-y);
+  padding: 14px 18px;
+  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.45);
+}
+.lbc-map-card small {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--lbc-g3);
+}
+.lbc-map-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--lbc-g2);
+}
+.lbc-map-links {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.lbc-map-links a {
+  color: var(--lbc-g2);
+  text-decoration: none;
+  border-bottom: 2px solid var(--lbc-y);
+  padding-bottom: 2px;
+}
+
+/* form */
+.lbc-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px 28px;
+  align-content: start;
+}
+.lbc-f {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lbc-f.full {
+  grid-column: 1/-1;
+}
+.lbc-f label {
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--lbc-g3);
+}
+.lbc-f input,
+.lbc-f select,
+.lbc-f textarea {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(63, 63, 61, 0.28);
+  border-radius: 0;
+  padding: 10px 0 12px;
+  font:
+    400 16px "Manrope",
+    system-ui,
+    sans-serif;
+  color: var(--lbc-g2);
+  outline: none;
+  transition: border-color 0.3s;
+}
+.lbc-f textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+.lbc-f input:focus,
+.lbc-f select:focus,
+.lbc-f textarea:focus {
+  border-bottom: 2px solid var(--lbc-y);
+}
+.lbc-f.err input {
+  border-bottom-color: #c0583f;
+}
+.lbc-f.err label {
+  color: #c0583f;
+}
+.lbc-ok {
+  grid-column: 1/-1;
+  padding: 16px 18px;
+  background: #fbfbf9;
+  border-left: 4px solid var(--lbc-y);
+  font-size: 14px;
+  color: var(--lbc-g2);
+}
+.lbc-actions {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.lbc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border: 0;
+  background: var(--lbc-g2);
+  color: #fff;
+  font:
+    600 11.5px "Manrope",
+    system-ui,
+    sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: inset 0 -3px 0 var(--lbc-y);
+  transition:
+    background 0.35s,
+    color 0.35s;
+}
+.lbc-btn:hover {
+  background: var(--lbc-y);
+  color: var(--lbc-g2);
+}
+.lbc-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.lbc-note {
+  font-size: 12.5px;
+  color: var(--lbc-g3);
+}
+
+/* mobile */
+@media (max-width: 980px) {
+  .lbc {
+    padding: 80px 6vw;
+  }
+  .lbc-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .lbc-map {
+    min-height: 380px;
+  }
+}
+@media (max-width: 600px) {
+  .lbc-form {
+    grid-template-columns: 1fr;
+  }
+}
